@@ -87,7 +87,7 @@ function main_menu() {
             echo -e "${CYAN}Terimakasih telah bermain!${RESET}"
             exit 0
             ;;
-        3)
+        *)
             echo -e "${RED}Pilihan tidak valid!"
             main_menu
             ;;
