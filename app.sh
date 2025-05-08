@@ -61,3 +61,13 @@ function play_game() {
         fi
     done
 }
+
+#fungsi untuk menampilkan riwayat
+function show_history() {
+    echo -e "${CYAN}Riwayat tebakan kamu:${RESET}"
+    for i in "$!riwayat_tebakan[@]"; do
+        echo "Tebakan ke-$((i_1)): ${riwayat_tebakan[$i]}"
+    done
+}
+
+
