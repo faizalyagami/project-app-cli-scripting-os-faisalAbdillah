@@ -8,7 +8,7 @@ CYAN="\033[0;36m"
 RESET="\033[0m"
 
 #Deklarasi array
-declare -a riwayat_tebakan
+declare -a guess_history
 
 #fungsi untuk menampilkan judul
 function show_title() {
@@ -20,7 +20,7 @@ function show_title() {
 #Fungsi untuk validasi input angka
 function validasi_input() {
     local input=$1
-    if [[!$input =~ ^[0-9]+$]]; then
+    if [[ ! "$input" =~ ^[0-9]+$ ]]; then
         return 1
     elif ((input < 1 || input > 100)); then
         return 2
@@ -32,29 +32,31 @@ function validasi_input() {
 #function game
 function play_game() {
     target=$((RANDOM % 100 +1))
-    chance = 0
+    chance=0
 
     echo -e "${YELLOW}Saya telah memilih angka antara 1 - 100. Coba tebak! ${RESET}"
 
     while true; do
-        read -p "Masukkan tebakan mu: " tebakan
-        validasi_input "$tebakan"
+        read -p "Masukkan tebakan mu: " guess
+        validasi_input "$guess"
         status=$?
 
-        if [[$status -eq 1]]; then
+        if [[ $status -eq 1 ]]; then
             echo -e "${RED}Input tidak valid. Masukkan angka saja.${RESET}"
             continue
-        elif [[$status -eq 2]]; then
+        elif [[ $status -eq 2 ]]; then
             echo -e "${RED}Angka harus diantara 1 sampai 100.${RESET}"
             continue
         fi
 
-        show_history+=("$tebakan")
+        guess_history+=("$guess")
         ((chance++))
 
-        if ((tebakan < target)); then
+        if ((guess < target)); then
             echo -e "${YELLOW}Terlalu kecil! Coba lagi.${RESET}"
-        elif ((tebakan > target)); then
+        elif ((guess > target)); then
+            echo -e "${YELLOW}Terlalu besar! Coba lagi.${RESET}"
+        else
             echo -e "${GREEN}Selamat! anda menebak dengan benar dalam $chance percobaan.${RESET}"
             show_history
             break
@@ -65,9 +67,31 @@ function play_game() {
 #fungsi untuk menampilkan riwayat
 function show_history() {
     echo -e "${CYAN}Riwayat tebakan kamu:${RESET}"
-    for i in "$!riwayat_tebakan[@]"; do
-        echo "Tebakan ke-$((i_1)): ${riwayat_tebakan[$i]}"
+    for i in "${!guess_history[@]}"; do
+        echo "Tebakan ke-$((i+1)): ${guess_history[$i]}"
     done
 }
 
+#function main menu
+function main_menu() {
+    show_title
+    echo "1. Mulai Permainan"
+    echo "2. Keluar"
+    read -p "Pilih Opsi [1/2]: " pilihan
+    
+    case $pilihan in
+        1)
+            play_game
+            ;;
+        2)
+            echo -e "${CYAN}Terimakasih telah bermain!${RESET}"
+            exit 0
+            ;;
+        3)
+            echo -e "${RED}Pilihan tidak valid!"
+            main_menu
+            ;;
+    esac
+}
 
+main_menu
